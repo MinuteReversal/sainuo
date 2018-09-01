@@ -4,7 +4,7 @@ import apiConfig from "~/static/apiConfig"
 import cookie from "js-cookie"
 
 export default async (context) => { 
-    
+    console.log("auth");
     //服务端
     if (process.server){
         const authorization = getUserAuthorizationFromCookie(context.req);//从cookie还原会话
@@ -30,21 +30,22 @@ export default async (context) => {
     }
 
     //客户端
-    else if(process.client){        
-        const user = getUserFromLocalStorage();
-        if (user){            
-            let authorization = cookie.get("authorization");
-            if(authorization){
-                context.store.commit("modules/user/setAuthorization",authorization);
+    else if(process.client){
+        //客户端不关心是否有cookie
+        const user = getUserFromLocalStorage();      
+        if (user){
+            //直接还原用户
+            if(!axios.defaults.headers.common["authorization"]){
+                axios.defaults.headers.common["authorization"] = user.authorization;
             }
             
-            if(context.store.getters["modules/user/information"] === null){                
+            if(context.store.getters["modules/user/information"] === null){      
                 context.store.commit("modules/user/restore", user);//还原会话
             }
         }
         else {
             if(context.route.path!="/login"){
-                context.redirect("/login");
+                window.location.replace("/login");
             }
         }
     }

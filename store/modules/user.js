@@ -28,7 +28,8 @@ const state = () => ({
     model: {
         information: null,//用户信息
         menus: null,        //菜单
-        permissions: null,  //权限        
+        permissions: null,  //权限
+        authorization:"", 
         timer: null       //时钟id
     }
 })
@@ -49,13 +50,20 @@ const actions = {
         let response = await axios.post(apiConfig.user_login, model.data);
         commit("onOnline");  //让客户端保持在线
         let authorization = `Bearer ${response.data.result}`;
-        await dispatch("loadUser", authorization);
+        try{
+            await dispatch("loadUser", authorization);
+            if(model.callback)model.callback(true);
+        }
+        catch(ex){
+            if(model.callback)model.callback(false);
+        }
     },
     async loadUser({ commit }, authorization) {
 
         //修改全局请求头
         commit("setAuthorization", authorization);
         //同步用户、菜单、权限到客户端
+        
         let user = await loadUser();
         let menus = await loadMenu();
         let permissions = await loadPermission();
@@ -105,21 +113,23 @@ const mutations = {
     },
     setAuthorization(state, authorization) {
         axios.defaults.headers.common["authorization"] = authorization;
+        state.model.authorization = authorization;
         cookie.set("authorization", authorization);
     },
     /**
      * 用户退出登录     
      */
     onLogout(state) {
-        console.log("onLogout");
-        axios.defaults.headers.common["authorization"] = "";
+        axios.defaults.headers.common["authorization"] = undefined;
         cookie.remove("authorization");
         state.commit("onOffline");
+        localStorage.clear();
         state.model = {
             information: null,//用户信息
             menus: null,        //菜单
             permissions: null,  //权限
-            timer: null       //时钟id
+            timer: null,      //时钟id
+            authorization:""
         }
     }
 }

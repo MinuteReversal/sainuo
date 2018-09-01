@@ -90,14 +90,12 @@ export default {
                 "password": me.form.passwords
             };
             me.loading = true;
-            me.$store.dispatch("login",{ data:postData})
-            .then(()=>{
-                me.$router.push("/");//转到主页
-                me.loading = false;                   
-            })
-            .catch(()=>{
-                me.loading = false;                   
-            });
+            me.$store.dispatch("login",{ 
+                data:postData,
+                callback(success){
+                if(success) me.$router.push("/");//转到主页
+                me.loading = false;   
+            }});
         }
     },
     mounted() {
