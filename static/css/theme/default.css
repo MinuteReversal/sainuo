@@ -97,31 +97,6 @@ input:-ms-input-placeholder,
     color: #da2717;
 }
 
-.background-color-white {
-    background-color: white;
-}
-
-.background-color-black {
-    background-color: black;
-}
-
-.background-color-gray {
-    background-color: #EEEEEE;
-}
-
-.background-color-minor {
-    background-color: #eef1f6;
-}
-
-.background-color-red,
-.background-color-highlight {
-    background-color:#20a0ff;
-}
-
-.background-color-main {
-    background-color: #20a0ff;
-}
-
 /*#region 边框*/
 /*边框颜色*/
 .border-color-default {

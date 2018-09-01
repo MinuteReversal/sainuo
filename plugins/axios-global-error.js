@@ -12,7 +12,7 @@ axios.interceptors.response.use(
                 closeOnPressEscape: false,
                 confirmButtonText: '重新登录',
                 callback: action => {
-                    viewModel.$router.replace("/");
+                    viewModel.$router.replace("/login");
                 }
             });
         }
